@@ -1,0 +1,74 @@
+version: '2.1'
+##############
+# Containers #
+##############
+services:
+  ################
+  # Paperless    #
+  ################
+  paperless_web:
+    container_name: paperless_web
+    hostname: paperless
+    image: thepaperlessproject/paperless
+    ports:
+        - 8000:8000
+    healthcheck:
+        test: ["CMD", "curl" , "-f", "http://localhost:8000"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
+    volumes:
+        - ${CONFIG}/paperless:/usr/src/paperless/data
+        - ${SCANS}:/usr/src/paperless/media
+        - ${SCANS}/ocr-ed:/consume
+    # The reason the line is here is so that the webserver that doesn't do
+    # any text recognition and doesn't have to install unnecessary
+    # languages the user might have set in the env-file by overwriting the
+    # value with nothing.
+    environment:
+        - PAPERLESS_OCR_LANGUAGES=
+        - PAPERLESS_DISABLE_LOGIN=true
+        - PAPERLESS_INLINE_DOC=true
+        - USERMAP_UID=${PUID}
+        - USERMAP_GID=${PGID}
+        - PAPERLESS_TIME_ZONE=${TZ}
+    command: ["runserver", "--insecure", "--noreload", "0.0.0.0:8000"]
+  paperless_consumer:
+    container_name: paperless_consumer
+    image: thepaperlessproject/paperless
+    # restart: always
+    depends_on:
+        paperless_web:
+            condition: service_healthy
+    volumes:
+        - ${CONFIG}/paperless:/usr/src/paperless/data
+        - ${SCANS}:/usr/src/paperless/media
+        - ${SCANS}/ocr-ed:/consume
+        # Likewise, you can add a local path to mount a directory for
+        # exporting. This is not strictly needed for paperless to
+        # function, only if you're exporting your files: uncomment
+        # it and fill in a local path if you know you're going to
+        # want to export your documents.
+        # - /path/to/another/arbitrary/place:/export
+    environment:
+        - PAPERLESS_OCR_LANGUAGES=eng+rus+ukr
+        - USERMAP_UID=${PUID}
+        - USERMAP_GID=${PGID}
+    command: ["document_consumer"]
+  ############
+  # OCRmyPDF #
+  ############
+  ocrmypdf-inotify:
+    container_name: ocrmypdf-inotify
+    network_mode: none
+    build: './ocrmypdf-inotify'
+    restart: always
+    user: "${PUID}:${PGID}"
+    environment:
+      OCRMYPDF_BINARY: /appenv/bin/ocrmypdf
+      OCRMYPDF_PARAMETERS: -j 2 -l eng+rus+ukr --clean --rotate-pages --deskew --jobs 4 --output-type pdfa
+    volumes:
+    - ${SCANS}/in:/in
+    - ${SCANS}/ocr:/work
+    - ${SCANS}/ocr-ed:/out
+    - ${SCANS}/archive:/archive

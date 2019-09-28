@@ -1,0 +1,5 @@
+OCRmyPDF will puts OCRed PDFs in here, and they would be consumed by Paperless.
+
+Also, this is where you put PDFs that you do not want/need to be
+OCRed, as OCRmyPDF will simply ignore files that do not need OCRing
+(and they will sit in scans/in).
