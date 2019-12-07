@@ -2,7 +2,7 @@
 
 Docker compose recipe for The Paperless Project + OCRmyPDF
 
-# How it works
+# How does it work
 
 This is a file-based workflow, organized in a bunch of folders inside "scans"
 
