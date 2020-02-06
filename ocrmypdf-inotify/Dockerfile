@@ -4,4 +4,5 @@ RUN mkdir -p /watcher/
 WORKDIR /watcher
 VOLUME /in /work /out /archive
 COPY ./main.sh /watcher/main.sh
+RUN chmod 0755 /watcher/main.sh
 ENTRYPOINT ["/bin/bash","/watcher/main.sh"]
