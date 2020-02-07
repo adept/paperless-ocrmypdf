@@ -1,6 +1,20 @@
 #/bin/bash
 set -o pipefail
 
+if [ -z "${OCRMYPDF_BINARY}" ] ; then
+    OCRMYPDF_BINARY=$(find / -name ocrmypdf -type f -executable 2>/dev/null)
+    if [ -z "${OCRMYPDF_BINARY}" ] ; then
+        echo "Failed to find ocrmypdf binary. Set env var OCRMYPDF_BINARY manually"
+        exit 1
+    else
+        echo "Found ocrmypdf binary $OCRMYPDF_BINARY"
+    fi
+fi
+
+if [ ! -x "${OCRMYPDF_BINARY}" ] ; then
+    echo "ocrmypdf binary ${OCRMYPDF_BINARY} is not executable. If you set OCRMYPDF_BINARY manually, check your settings"
+fi
+
 inotifywait -m -e close_write -e moved_to /in |
     while read -r path action file; do
         echo "Waiting for $file..."

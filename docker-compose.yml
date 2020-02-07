@@ -65,7 +65,9 @@ services:
     restart: always
     user: "${PUID}:${PGID}"
     environment:
-      OCRMYPDF_BINARY: /appenv/bin/ocrmypdf
+      # Container should autodetect location of ocrmypdf binary,
+      # but if it fails you can set it manually:
+      # OCRMYPDF_BINARY: /usr/local/bin/ocrmypdf
       OCRMYPDF_PARAMETERS: -j 2 -l eng+rus+ukr --clean --rotate-pages --deskew --jobs 4 --output-type pdfa
     volumes:
     - ${SCANS}/in:/in
