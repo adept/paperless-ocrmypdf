@@ -1,6 +1,10 @@
 # paperless-ocrmypdf
 
-Docker compose recipe for The Paperless Project + OCRmyPDF
+Docker compose recipe for The Paperless Project + OCRmyPDF that uses inotify to detect new files and process them
+
+Note that since recently (late 2019) OCRmyPDF docker image includes watcher.py (based on Python watchdog module), so you might consider using it.
+
+I wanted to archive processed documents and re-try OCR on DpiError using img2pdf, so I rolled out my own script instead.
 
 # How does it work
 
