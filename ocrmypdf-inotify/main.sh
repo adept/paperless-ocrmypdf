@@ -39,7 +39,7 @@ inotifywait -m -e close_write -e moved_to /in |
 
         if [ $rc -eq 0 -a -f "/work/$out" ] ; then
             mv -n "/work/$out" "/out/$out"
-            mv -n "$path/$file" /archive
+            mv -n "$path/$file" /archive/$(date +%y%m%d-%H%M%S)_"$file"
             echo "File $file processed and archived"
         else
             echo "Failed to process $file, leaving as is"
