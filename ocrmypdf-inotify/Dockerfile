@@ -1,5 +1,5 @@
 FROM jbarlow83/ocrmypdf:latest
-RUN apt-get install -y inotify-tools tesseract-ocr-rus tesseract-ocr-ukr
+RUN apt-get update && apt-get install -y inotify-tools tesseract-ocr-rus tesseract-ocr-ukr
 RUN mkdir -p /watcher/
 WORKDIR /watcher
 VOLUME /in /work /out /archive
