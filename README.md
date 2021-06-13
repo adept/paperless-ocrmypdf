@@ -2,9 +2,13 @@
 
 Docker compose recipe for The Paperless Project + OCRmyPDF that uses inotify to detect new files and process them
 
-Note that since recently (late 2019) OCRmyPDF docker image includes watcher.py (based on Python watchdog module), so you might consider using it.
-
 I wanted to archive processed documents and re-try OCR on DpiError using img2pdf, so I rolled out my own script instead.
+
+# Limitations
+
+This image relies on inotify events from your host system propagating into the container. This works if your host system is Linux, but does not if your host system is Windows (for example, see http://blog.subjectify.us/miscellaneous/2017/04/24/docker-for-windows-watch-bindings.html)
+
+Note that since recently (late 2019) OCRmyPDF docker image includes watcher.py (based on Python watchdog module), so you might consider using it instead, even though it depends on filesystem polling.
 
 # How does it work
 
@@ -28,6 +32,6 @@ Move "config" and "scans" folders somewhere on your filesystem.
 
 Change paths in .env to point to the locations of "config" and "scans"
 
-If you need extra languages, configure them in docker-compose.yml and modify Dockerfile to install them into ocrmypdf container.
+If you need extra languages, configure them in docker-compose.yml and modify Dockerfile to install them into ocrmypdf container. Dockerfile currently is written to include English, Russian and Ukrainian languages.
 
 Run "docker-compose up -d" and navigate to http://localhost:8000 to configure Paperless.
